@@ -1,40 +1,47 @@
-<html>
+<!doctype html>
+<html lang="es">
 <head>
-<link rel="stylesheet" href="estilos.css" type="text/css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ventas - Productos</title>
+    <link rel="stylesheet" href="estilos.css" type="text/css">
 </head>
 <body>
+    <main class="app">
+        <section class="panel">
+            <div class="panel__header">
+                <h1>Ventas</h1>
+                <p>Listado simple de productos registrados.</p>
+            </div>
+        </section>
 
-	<form action="insertar.php" method="POST">
-		<input type="text" name="idPro" size="2">
-		<input type="text" name="Nombre" size="10">
-		<input type="text" name="Precio" size="3">
-		<input type="text" name="Ext" size="3"><br>
-		<input type="submit" value="Registrar">
-	</form>
+        <section class="tabla-contenedor">
+            <?php
+            include('conexion.php');
 
-<?php
-	include('conexion.php');
-	$con = conectaDB();
-	$sql ="select Nombre,Precio from td_productos";
+            $con = conectaDB();
+            $sql = 'SELECT nombre, precio FROM productos ORDER BY idpro';
+            $resultado = $con->query($sql);
 
-	echo "<table class='mitabla1'> ";
-	echo "<thead>";
-	echo "<th>Nombre</th>";
-	echo "<th>Precio</th>";
-	echo "</thead>";
-	echo "<tbody>";
-	$resultado = mysqli_query($con,$sql);  
-	while($fila = mysqli_fetch_row($resultado)){
- 	
-		echo "<tr>";
-			echo "<td>".$fila[0]."</td>";
-			echo "<td>".$fila[1]."</td>";
-		echo "</tr>";
-	
-	}
-	
-	echo "</tbody> </table>";
-?>
+            echo "<table>";
+            echo "<thead>";
+            echo "<tr><th>Nombre</th><th>Precio</th></tr>";
+            echo "</thead>";
+            echo "<tbody>";
 
+            while ($fila = $resultado->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . htmlspecialchars($fila['nombre'], ENT_QUOTES, 'UTF-8') . "</td>";
+                echo "<td>$" . number_format((float) $fila['precio'], 2) . "</td>";
+                echo "</tr>";
+            }
+
+            echo "</tbody>";
+            echo "</table>";
+
+            $con->close();
+            ?>
+        </section>
+    </main>
 </body>
 </html>

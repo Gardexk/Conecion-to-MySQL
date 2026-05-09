@@ -1,22 +1,20 @@
 <?php
-include('conexion.php'); // Incluye el archivo de conexión
+header('Content-Type: application/json; charset=utf-8');
 
-// Establecer conexión
+include('conexion.php');
+
 $conexion = conectaDB();
+$sql = 'SELECT idpro, nombre, precio, existencia FROM productos ORDER BY idpro';
+$resultado = $conexion->query($sql);
 
-// Consulta SQL para obtener datos
-$sql = "SELECT * FROM productos";
-$resultado = mysqli_query($conexion, $sql);
-
-// Crear un array para almacenar los datos
-$datos = array();
-while ($fila = mysqli_fetch_assoc($resultado)) {
+$datos = [];
+while ($fila = $resultado->fetch_assoc()) {
+    $fila['idpro'] = (int) $fila['idpro'];
+    $fila['precio'] = (float) $fila['precio'];
+    $fila['existencia'] = (int) $fila['existencia'];
     $datos[] = $fila;
 }
 
-// Convertir los datos a formato JSON y enviarlos al frontend
 echo json_encode($datos);
-
-// Cerrar conexión
-mysqli_close($conexion);
+$conexion->close();
 ?>
